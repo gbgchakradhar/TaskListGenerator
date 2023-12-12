@@ -19,13 +19,15 @@ async function runAggregationAndDownloadCSV() {
         const collection = database.collection('tasks');
 
         const result = await collection.aggregate(aggregationPipeline).toArray();
-
+        console.log(result);
         const uniqueStatusKeys = Array.from(new Set(result.flatMap(obj => Object.keys(obj.status))));
 
         // Convert array of objects to CSV format
         const csvData = result.map(obj => {
             const row = [
                 obj.overdue_user,
+                obj.updatedKeys_user,
+                obj.createdCount_user,
                 obj.unassignedCount,
                 obj.totalcreatedyesterday,
                 obj.totalupdatedyesterday,
@@ -46,7 +48,7 @@ async function runAggregationAndDownloadCSV() {
             return row.join(','); // Join the array elements with commas to create a CSV row
         });
 
-        const csvHeader = ['overdue_user', 'unassignedCount', 'totalcreatedyesterday', 'totalupdatedyesterday', 'overDueOverall', 'WorkspaceID', 'user', ...uniqueStatusKeys];
+        const csvHeader = ['overdue_user', 'updatedKeys_user', 'createdCount_user', 'unassignedCount', 'totalcreatedyesterday', 'totalupdatedyesterday', 'overDueOverall', 'WorkspaceID', 'user', ...uniqueStatusKeys];
         const csvContent = [csvHeader.join(','), ...csvData].join('\n');
 
         // Write CSV content to file
@@ -69,7 +71,7 @@ async function runAggregationAndDownloadCSV() {
             .on('end', () => {
                 rows.sort((a, b) => a[sortByColumn].localeCompare(b[sortByColumn]));
 
-                const columnOrder = ['unassignedCount', 'totalcreatedyesterday', 'totalupdatedyesterday', 'overDueOverall', 'WorkspaceID', 'user', 'overdue_user', 'todo', 'inProgress', 'inReview', 'done', 'onHold'];
+                const columnOrder = ['unassignedCount', 'totalcreatedyesterday', 'totalupdatedyesterday', 'overDueOverall', 'WorkspaceID', 'user', 'overdue_user', 'updatedKeys_user', 'createdCount_user', 'todo', 'inProgress', 'inReview', 'done', 'onHold'];
 
                 const rearrangedRows = rows.map((row) => {
                     const rearrangedRow = {};
