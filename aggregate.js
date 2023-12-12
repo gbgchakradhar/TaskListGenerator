@@ -53,13 +53,13 @@ module.exports = [
                                 {
                                     $gte: [
                                         "$createdAt",
-                                        1702233000,
+                                        startTimeInSeconds,
                                     ],
                                 },
                                 {
                                     $lte: [
                                         "$createdAt",
-                                        1702319399,
+                                        endTimeInSeconds,
                                     ],
                                 },
                             ],
@@ -77,13 +77,13 @@ module.exports = [
                                 {
                                     $gte: [
                                         "$updatedAt",
-                                        1702233000,
+                                        startTimeInSeconds,
                                     ],
                                 },
                                 {
                                     $lte: [
                                         "$updatedAt",
-                                        1702319399,
+                                        endTimeInSeconds,
                                     ],
                                 },
                                 {
@@ -107,7 +107,7 @@ module.exports = [
                         {
                             $and: [
                                 {
-                                    $lt: ["$dueDate", 20231212], //today's date
+                                    $lt: ["$dueDate", formattedDate], //today's date
                                 },
                                 {
                                     $ne: ["$status", "done"],
