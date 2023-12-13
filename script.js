@@ -6,7 +6,8 @@ const csvParser = require('csv-parser');
 
 const uri = process.env.MONGO_URI;
 
-const aggregationPipeline = require('./aggregate');
+const aggregationPipeline1 = require('./aggregate');
+const aggregationPipeline2 = require('./user_level');
 
 const client = new MongoClient(uri);
 
@@ -18,12 +19,25 @@ async function runAggregationAndDownloadCSV() {
         const database = client.db('production');
         const collection = database.collection('tasks');
 
-        const result = await collection.aggregate(aggregationPipeline).toArray();
-        console.log(result);
-        const uniqueStatusKeys = Array.from(new Set(result.flatMap(obj => Object.keys(obj.status))));
+        const result1 = await collection.aggregate(aggregationPipeline1).toArray();
+
+        const result2 = await collection.aggregate(aggregationPipeline2).toArray();
+
+        const mergedResult = result1.map(item1 => {
+            const matchingItem2 = result2.find(item2 => item1.WorkspaceID === item2.WorkspaceID && item1.user === item2.user);
+            return { ...item1, createdCount_user: matchingItem2?.createdCount_user, updatedKeys_user: matchingItem2?.updatedKeys_user };
+        });
+
+        // console.log(mergedResult);
+        const textFilePath = 'merged_result.txt';
+
+        const textContent = result1.map(item => JSON.stringify(item)).join('\n');
+        fs.writeFileSync(textFilePath, textContent);
+
+        const uniqueStatusKeys = Array.from(new Set(mergedResult.flatMap(obj => Object.keys(obj.status))));
 
         // Convert array of objects to CSV format
-        const csvData = result.map(obj => {
+        const csvData = mergedResult.map(obj => {
             const row = [
                 obj.overdue_user,
                 obj.updatedKeys_user,
@@ -34,11 +48,9 @@ async function runAggregationAndDownloadCSV() {
                 obj.overDueOverall,
                 obj.WorkspaceID,
                 obj.user,
+
+
             ];
-            // const csvData = result.map(obj => {
-            //     const row = [
-            //         ...Object.values(obj), // Use Object.values to get an array of values from the object
-            //     ];
 
             // Flatten the status property dynamically
             uniqueStatusKeys.forEach(key => {
