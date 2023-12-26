@@ -29,10 +29,10 @@ async function runAggregationAndDownloadCSV() {
         });
 
         // console.log(mergedResult);
-        const textFilePath = 'merged_result.txt';
+        // const textFilePath = 'merged_result.txt';
 
-        const textContent = result1.map(item => JSON.stringify(item)).join('\n');
-        fs.writeFileSync(textFilePath, textContent);
+        // const textContent = result1.map(item => JSON.stringify(item)).join('\n');
+        // fs.writeFileSync(textFilePath, textContent);
 
         const uniqueStatusKeys = Array.from(new Set(mergedResult.flatMap(obj => Object.keys(obj.status))));
 

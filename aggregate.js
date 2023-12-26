@@ -1,8 +1,8 @@
 
 const currentDate = new Date();
 const formattedDate = parseInt(formatDate(currentDate), 10);
-// const formattedDate = 20231211
-// console.log(typeof (formattedDate));
+// const formattedDate = 20231224
+console.log(formattedDate);
 function formatDate(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -18,8 +18,10 @@ previousDay.startOf('day');
 const startTimeInSeconds = previousDay.unix();
 previousDay.endOf('day');
 const endTimeInSeconds = previousDay.unix();
+// const startTimeInSeconds = 1703269800
+// const endTimeInSeconds = 1703356199
 
-// console.log(startTimeInSeconds, " ", endTimeInSeconds);
+console.log(startTimeInSeconds, " ", endTimeInSeconds);
 
 
 module.exports = [
